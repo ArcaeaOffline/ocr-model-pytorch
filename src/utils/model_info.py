@@ -9,6 +9,11 @@ class ModelInfo:
     image_width: int
     image_height: int
     labels: list[str]
+    dims: int
+    grayscale: bool
+    use_attention: bool
+    use_ctc: bool
+
     built_time: datetime
 
     blank_token: str = cfg.MODEL.blank_token
@@ -34,6 +39,10 @@ class ModelInfo:
             image_width=model_info_dict["image_width"],
             image_height=model_info_dict["image_height"],
             labels=model_info_dict["labels"].copy(),
+            dims=model_info_dict["dims"],
+            grayscale=model_info_dict["grayscale"],
+            use_attention=model_info_dict["use_attention"],
+            use_ctc=model_info_dict["use_ctc"],
             built_time=datetime.fromtimestamp(
                 model_info_dict["built_timestamp"], timezone.utc
             ),
@@ -47,6 +56,10 @@ def dump_model_info(labels: list[str]) -> ModelInfo:
         image_width=cfg.MODEL.image_width,
         image_height=cfg.MODEL.image_height,
         labels=labels.copy(),
+        dims=cfg.MODEL.dims,
+        grayscale=cfg.MODEL.grayscale,
+        use_attention=cfg.MODEL.use_attention,
+        use_ctc=cfg.MODEL.use_ctc,
         built_time=cfg.MISC.start_timestamp,
         blank_token=cfg.MODEL.blank_token,
         pad_token=cfg.MODEL.pad_token,
