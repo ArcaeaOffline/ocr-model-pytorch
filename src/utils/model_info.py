@@ -8,7 +8,7 @@ import config as cfg
 class ModelInfo:
     image_width: int
     image_height: int
-    classes: list[str]
+    labels: list[str]
     built_time: datetime
 
     blank_token: str = cfg.MODEL.blank_token
@@ -22,7 +22,7 @@ class ModelInfo:
         return {
             "image_width": self.image_width,
             "image_height": self.image_height,
-            "classes": self.classes.copy(),
+            "labels": self.labels.copy(),
             "built_timestamp": self.built_timestamp,
             "blank_token": self.blank_token,
             "pad_token": self.pad_token,
@@ -33,7 +33,7 @@ class ModelInfo:
         return cls(
             image_width=model_info_dict["image_width"],
             image_height=model_info_dict["image_height"],
-            classes=model_info_dict["classes"].copy(),
+            labels=model_info_dict["labels"].copy(),
             built_time=datetime.fromtimestamp(
                 model_info_dict["built_timestamp"], timezone.utc
             ),
@@ -42,11 +42,11 @@ class ModelInfo:
         )
 
 
-def dump_model_info(classes: list[str]) -> ModelInfo:
+def dump_model_info(labels: list[str]) -> ModelInfo:
     return ModelInfo(
         image_width=cfg.MODEL.image_width,
         image_height=cfg.MODEL.image_height,
-        classes=classes.copy(),
+        labels=labels.copy(),
         built_time=cfg.MISC.start_timestamp,
         blank_token=cfg.MODEL.blank_token,
         pad_token=cfg.MODEL.pad_token,

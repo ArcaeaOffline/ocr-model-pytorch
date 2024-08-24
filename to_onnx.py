@@ -21,8 +21,8 @@ if not model_filepath.exists():
 model_info = ModelInfo.from_dict(
     json.loads(cfg.MODEL.save_info_path.read_text(encoding="utf-8"))
 )
-classes = model_info.classes
-num_chars = len(classes) - 1
+labels = model_info.labels
+num_chars = len(labels) - 1
 
 model = CRNN(
     resolution=(cfg.MODEL.image_width, cfg.MODEL.image_height),
@@ -69,7 +69,7 @@ def validate():
     image_path = "examples/t1_score_9586884.png"
     image = Image.open(image_path)
     validator = OnnxOutputValidator(
-        model, str(onnx_patched_filepath.resolve()), classes
+        model, str(onnx_patched_filepath.resolve()), labels
     )
     validator.assert_onnx_torch_close(image)
     validator.print_answers(image_path)

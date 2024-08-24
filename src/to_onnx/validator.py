@@ -12,7 +12,7 @@ console = Console()
 
 
 def decode_predictions(
-    classes: list[str],
+    labels: list[str],
     predictions: np.ndarray,
     blank_token: str = cfg.MODEL.blank_token,
 ):
@@ -22,7 +22,7 @@ def decode_predictions(
         batch_e = predictions[i]
 
         for j in range(len(batch_e)):
-            string += classes[batch_e[j]]
+            string += labels[batch_e[j]]
 
         string = string.split(blank_token)
         string = [x for x in string if x != ""]
@@ -32,8 +32,8 @@ def decode_predictions(
 
 
 class OnnxOutputValidator:
-    def __init__(self, model: CRNN, onnx_patched_model_path: str, classes: list[str]):
-        self.classes = classes
+    def __init__(self, model: CRNN, onnx_patched_model_path: str, labels: list[str]):
+        self.labels = labels
         self.model = model
         self.onnx_session = onnxrt.InferenceSession(
             onnx_patched_model_path, providers=onnxrt.get_available_providers()
@@ -99,10 +99,10 @@ class OnnxOutputValidator:
             console.print_exception()
 
     def onnx_predictions(self, image: Image.Image):
-        return decode_predictions(self.classes, np.array(self.onnx_outputs(image)[1]))
+        return decode_predictions(self.labels, np.array(self.onnx_outputs(image)[1]))
 
     def torch_predictions(self, image: Image.Image):
-        return decode_predictions(self.classes, self.torch_outputs(image)[1])
+        return decode_predictions(self.labels, self.torch_outputs(image)[1])
 
     def answer_readable(self, predictions: list[str]):
         output = ""

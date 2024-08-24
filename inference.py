@@ -12,7 +12,7 @@ from src.utils.model_info import ModelInfo
 model_info = ModelInfo.from_dict(
     json.loads(cfg.MODEL.save_info_path.read_text(encoding="utf-8"))
 )
-classes = model_info.classes
+labels = model_info.labels
 
 
 def inference(image_path):
@@ -32,9 +32,9 @@ def inference(image_path):
         preds, _ = model(image)
 
     if model.use_ctc:
-        answer = decode_predictions(preds, classes)
+        answer = decode_predictions(preds, labels)
     else:
-        answer = decode_padded_predictions(preds, classes)
+        answer = decode_padded_predictions(preds, labels)
     return answer
 
 
@@ -42,7 +42,7 @@ if __name__ == "__main__":
     # Setup model and load weights
     model = CRNN(
         dims=cfg.MODEL.dims,
-        num_chars=len(classes) - 1,
+        num_chars=len(labels) - 1,
         use_attention=cfg.MODEL.use_attention,
         use_ctc=cfg.MODEL.use_ctc,
         grayscale=cfg.MODEL.grayscale,

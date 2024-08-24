@@ -4,14 +4,14 @@ import config as cfg
 
 
 def decode_padded_predictions(
-    predictions: torch.Tensor, classes: list, pad_token: str = cfg.MODEL.pad_token
+    predictions: torch.Tensor, labels: list, pad_token: str = cfg.MODEL.pad_token
 ) -> list:
     """
     Decode padded predictions into a list of strings.
 
     Parameters:
         predictions (torch.Tensor): A tensor of predictions with shape (batch_size, sequence_length, num_classes).
-        classes (list): A list of classes, where each class is a string.
+        labels (list): A list of labels, where each class is a string.
         pad_token (str, optional): The padding token used in the predictions. Default is '-'.
 
     Returns:
@@ -25,14 +25,14 @@ def decode_padded_predictions(
     for item in predictions:
         string = ""
         for idx in item:
-            string += classes[idx]
+            string += labels[idx]
         texts.append(string.replace(pad_token, ""))
 
     return texts
 
 
 def decode_predictions(
-    predictions: torch.Tensor, classes: list, blank_token: str = cfg.MODEL.blank_token
+    predictions: torch.Tensor, labels: list, blank_token: str = cfg.MODEL.blank_token
 ) -> list:
     """
     There's probably faster implementations, I just wrote it myself
@@ -50,7 +50,7 @@ def decode_predictions(
 
     Parameters:
         predictions (torch.Tensor): A tensor of predictions with shape (batch_size, sequence_length, num_classes).
-        classes (list): A list of classes, where each class is a string.
+        labels (list): A list of labels, where each class is a string.
         blank_token (str, optional): The token used by CTC to represent empty space. Default is '∅'.
 
     Returns:
@@ -67,7 +67,7 @@ def decode_predictions(
         batch_e = predictions[i]
 
         for j in range(len(batch_e)):
-            string += classes[batch_e[j]]
+            string += labels[batch_e[j]]
 
         string = string.split(blank_token)
         string = [x for x in string if x != ""]

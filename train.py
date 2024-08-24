@@ -31,10 +31,10 @@ def run_training():
     writer = SummaryWriter(f"logs/tensorboard/{cfg.MISC.start_timestamp_str}")
 
     # 1. Dataset and dataloaders
-    train_loader, test_loader, test_original_targets, classes = build_dataloaders()
+    train_loader, test_loader, test_original_targets, labels = build_dataloaders()
 
-    logger.info("Dataset number of classes: %d", len(classes))
-    logger.info("Classes are: %r", classes)
+    logger.info("Dataset number of labels: %d", len(labels))
+    logger.info("Labels are: %r", labels)
 
     time.sleep(1)
 
@@ -43,7 +43,7 @@ def run_training():
     model = CRNN(
         resolution=(cfg.MODEL.image_width, cfg.MODEL.image_height),
         dims=cfg.MODEL.dims,
-        num_chars=len(classes),
+        num_chars=len(labels),
         use_attention=cfg.MODEL.use_attention,
         use_ctc=cfg.MODEL.use_ctc,
         grayscale=cfg.MODEL.grayscale,
@@ -64,14 +64,14 @@ def run_training():
 
     # This is the same list of characters from dataset, but with the '∅' token
     # which denotes blank for ctc, or pad for cross_entropy
-    training_classes = [cfg.MODEL.blank_token]
-    training_classes.extend(classes)
+    training_labels = [cfg.MODEL.blank_token]
+    training_labels.extend(labels)
     writer.add_text(
         "Summary",
-        f"classes: {classes}\n"
+        f"labels: {labels}\n"
         + f"{len(train_loader)} items in `train_loader`\n"
         + f"{len(test_loader)} items in `test_loader`\n"
-        + f"training_classes: {training_classes}",
+        + f"training_labels: {training_labels}",
     )
     writer.flush()
 
@@ -93,10 +93,10 @@ def run_training():
         for vp in valid_preds:
             if model.use_ctc:
                 # print(vp.shape)
-                current_preds = decode_predictions(vp, training_classes)
+                current_preds = decode_predictions(vp, training_labels)
             else:
                 # print(vp)
-                current_preds = decode_padded_predictions(vp, training_classes)
+                current_preds = decode_padded_predictions(vp, training_labels)
 
             if cfg.TRAINING.trim_paddings_at_end:
                 current_preds = [x.replace("-", "") for x in current_preds]
@@ -166,7 +166,7 @@ def run_training():
     )
 
     cfg.MODEL.save_info_path.write_text(
-        json.dumps(dump_model_info(training_classes).asdict(), ensure_ascii=False),
+        json.dumps(dump_model_info(training_labels).asdict(), ensure_ascii=False),
         encoding="utf-8",
     )
     logger.info("ModelInfo saved to %s", cfg.MODEL.save_info_path)
