@@ -64,7 +64,7 @@ class ModelConfig:
 
 @dataclasses.dataclass
 class TraningConfig:
-    device = "cuda"
+    device: str = "cuda"
     batch_size: int = 64
     num_workers: int = 8
     lr: float = 3e-4
