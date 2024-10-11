@@ -28,9 +28,13 @@ class ModelInfo:
             "image_width": self.image_width,
             "image_height": self.image_height,
             "labels": self.labels.copy(),
-            "built_timestamp": self.built_timestamp,
+            "dims": self.dims,
+            "grayscale": self.grayscale,
+            "use_attention": self.use_attention,
+            "use_ctc": self.use_ctc,
             "blank_token": self.blank_token,
             "pad_token": self.pad_token,
+            "built_timestamp": self.built_timestamp,
         }
 
     @classmethod
