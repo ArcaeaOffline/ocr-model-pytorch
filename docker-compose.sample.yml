@@ -1,0 +1,47 @@
+x-gpu-configuration:
+  &default-deploy
+  resources:
+    reservations:
+      devices:
+        - driver: nvidia
+          count: all
+          capabilities: [gpu]
+
+x-volumes:
+  &default-volumes
+  - ./docker/cache:/root/.cache  # matplotlib & torch hub caches
+  - .:/workspace
+
+x-environment:
+  &default-environment
+  - TZ=Etc/UTC  # affects log timestamps, change as you need
+
+services:
+  trainer:
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile
+    image: ArcaeaOffline/ocr-model-pytorch-trainer
+    ipc: host  # avoid `insufficient shared memory (shm)` errors
+    environment: *default-environment
+    volumes: *default-volumes
+    command: ['python', 'train.py']
+    deploy: *default-deploy
+
+  interactive:
+    image: ArcaeaOffline/ocr-model-pytorch-trainer
+    stdin_open: true
+    tty: true
+    ipc: host
+    environment: *default-environment
+    volumes: *default-volumes
+    deploy: *default-deploy
+
+  tensorboard:
+    image: ArcaeaOffline/ocr-model-pytorch-trainer
+    ports:
+      - 6006:6006
+    volumes:
+      - ./logs/tensorboard:/app/runs/:ro
+    depends_on:
+      - trainer

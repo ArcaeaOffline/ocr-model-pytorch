@@ -8,11 +8,30 @@
 * Use SQLite database for labelling (with a crappy GUI classifier)
 * Experimental ONNX support
 * Limited Tensorboard logging support
+* Experimental Docker support
 * Removed some fancy log messages during training
 
 ## TODOs?
 
 * Quantization?
+
+## Docker
+
+### Command line
+
+- [./docker/build.sh](./docker/build.sh): build images we need
+- [./docker/train.sh](./docker/train.sh): start training session and a tensorboard session listening on port 6006
+- [./docker/interactive.sh](./docker/interactive.sh): an interactive bash shell for custom commands
+
+### Docker compose
+
+Docker compose isn't suitable for one-time tasks like this. However we do have a sample [docker-compose.sample.yml](./docker-compose.sample.yml) under the root directory, you can copy and create your own `docker-compose.yml` in your flavor.
+
+Before starting, it's suggested to run `docker compose build` to build images.
+
+To start training, try `docker compose up`. This will start `python train.py` immediately, and a tensorboard session listening on port 6006.
+
+If you want an interactive shell, run `docker compose run --rm interactive`.
 
 ## License
 
