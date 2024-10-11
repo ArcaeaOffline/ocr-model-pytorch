@@ -15,12 +15,12 @@ model_info = ModelInfo.from_dict(
 labels = model_info.labels
 
 
-def inference(image_path):
+def inference(image_path, model, device):
     # Hardcoded resize
     image = Image.open(image_path).convert("RGB")
     image = image.resize((250, 50), resample=Image.Resampling.BILINEAR)
     image = np.array(image)
-    print(image.shape)
+    # print(image.shape)
 
     image = np.transpose(image, (2, 0, 1)).astype(np.float32)
     image = image[None, ...]
@@ -35,7 +35,19 @@ def inference(image_path):
         answer = decode_predictions(preds, labels)
     else:
         answer = decode_padded_predictions(preds, labels)
-    return answer
+
+    output = ""
+    last_char = None
+    for char in answer:
+        if char == last_char:
+            continue
+        if char == cfg.MODEL.blank_token:
+            last_char = None
+            continue
+        output += char
+        last_char = char
+
+    return output
 
 
 if __name__ == "__main__":
@@ -53,5 +65,5 @@ if __name__ == "__main__":
     model.eval()
 
     filepath = "test.jpg"  # Replace with your image!
-    answer = inference(filepath)
+    answer = inference(filepath, model, device)
     print(f"text: {answer}")
