@@ -61,7 +61,7 @@ if __name__ == "__main__":
     )
     device = torch.device("cpu")
     model.to(device)
-    model.load_state_dict(cfg.MODEL.save_early_stop_path)
+    model.load_state_dict(torch.load(cfg.MODEL.save_early_stop_path, weights_only=True))
     model.eval()
 
     filepath = "test.jpg"  # Replace with your image!
